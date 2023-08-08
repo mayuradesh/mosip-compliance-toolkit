@@ -1,27 +1,18 @@
 package io.mosip.compliance.toolkit.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.mosip.commons.khazana.spi.ObjectStoreAdapter;
-import io.mosip.compliance.toolkit.constants.AppConstants;
-import io.mosip.compliance.toolkit.dto.abis.DataShareExpireRequest;
-import io.mosip.compliance.toolkit.dto.abis.DataShareRequestDto;
-import io.mosip.compliance.toolkit.dto.abis.DataShareResponseWrapperDto;
-import io.mosip.compliance.toolkit.dto.abis.DataShareSaveTokenRequest;
-import io.mosip.compliance.toolkit.entity.AbisDataShareTokenEntity;
-import io.mosip.compliance.toolkit.repository.AbisDataShareTokenRepository;
-import io.mosip.compliance.toolkit.repository.BiometricTestDataRepository;
-import io.mosip.compliance.toolkit.util.AuthManagerHelper;
-import io.mosip.compliance.toolkit.util.KeyManagerHelper;
-import io.mosip.compliance.toolkit.util.ObjectMapperConfig;
-import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
-import io.mosip.kernel.core.authmanager.authadapter.model.MosipUserDto;
-import io.mosip.kernel.core.http.RequestWrapper;
-import io.mosip.kernel.core.http.ResponseWrapper;
+import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.io.InputStream;
+import java.util.Optional;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -35,14 +26,23 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.io.InputStream;
-import java.util.Optional;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import static junit.framework.TestCase.assertEquals;
-import static org.codehaus.groovy.runtime.DefaultGroovyMethods.any;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import io.mosip.commons.khazana.spi.ObjectStoreAdapter;
+import io.mosip.compliance.toolkit.constants.AppConstants;
+import io.mosip.compliance.toolkit.dto.abis.DataShareExpireRequest;
+import io.mosip.compliance.toolkit.dto.abis.DataShareRequestDto;
+import io.mosip.compliance.toolkit.dto.abis.DataShareResponseWrapperDto;
+import io.mosip.compliance.toolkit.dto.abis.DataShareSaveTokenRequest;
+import io.mosip.compliance.toolkit.entity.AbisDataShareTokenEntity;
+import io.mosip.compliance.toolkit.repository.AbisDataShareTokenRepository;
+import io.mosip.compliance.toolkit.repository.BiometricTestDataRepository;
+import io.mosip.compliance.toolkit.util.KeyManagerHelper;
+import io.mosip.compliance.toolkit.util.ObjectMapperConfig;
+import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
+import io.mosip.kernel.core.authmanager.authadapter.model.MosipUserDto;
+import io.mosip.kernel.core.http.RequestWrapper;
+import io.mosip.kernel.core.http.ResponseWrapper;
 
 @ContextConfiguration(classes = { TestContext.class, WebApplicationContext.class })
 @RunWith(SpringRunner.class)
@@ -57,9 +57,6 @@ public class ABISDataShareServiceTest {
 
 	@Mock
 	private KeyManagerHelper keyManagerHelper;
-
-	@Mock
-	private AuthManagerHelper authManagerHelper;
 
 	@Mock
 	private Authentication authentication;
@@ -118,8 +115,7 @@ public class ABISDataShareServiceTest {
 		InputStream inputStream = mock(InputStream.class);
 		when(testCasesService.getPartnerTestDataStream(Mockito.any(), Mockito.any(), Mockito.any()))
 				.thenReturn(inputStream);
-		when(authManagerHelper.getAuthToken()).thenReturn("authToken");
-
+		
 		DataShareRequestDto dataShareRequestDto = new DataShareRequestDto();
 		dataShareRequestDto.setTestcaseId("ABIS3000");
 		dataShareRequestDto.setBioTestDataName("testdata");

@@ -383,10 +383,8 @@ public class ReportGeneratorService {
 
 	private PartnerTable getPartnerDetails(String projectId) throws Exception {
 		PartnerTable partnerTable = new PartnerTable();
-		io.restassured.response.Response partnerResp = partnerManagerHelper.getPartnerDetails(projectId);
-		PartnerDetailsDto partnerDetailsDto = objectMapperConfig.objectMapper()
-				.readValue(partnerResp.getBody().asString(), PartnerDetailsDto.class);
-		if (partnerDetailsDto.getErrors().size() == 0) {
+		PartnerDetailsDto partnerDetailsDto = partnerManagerHelper.getPartnerDetails(projectId);
+		if (partnerDetailsDto != null && partnerDetailsDto.getErrors().size() == 0) {
 			Partner partner = partnerDetailsDto.getResponse();
 			partnerTable.setOrgName(partner.getOrganizationName());
 			partnerTable.setAddress(partner.getAddress());
